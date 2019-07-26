@@ -32,7 +32,7 @@ addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
 addCommandAlias("compileJVM", ";coreJVM/test:compile;stacktracerJVM/test:compile")
 addCommandAlias("testJVM", ";coreJVM/test;stacktracerJVM/test;streamsJVM/test;testJVM/test")
-addCommandAlias("testJS", ";coreJS/test;stacktracerJS/test;streamsJS/test")
+addCommandAlias("testJS", ";coreJS/test;stacktracerJS/test;streamsJS/test;testModuleJS/test")
 
 lazy val root = project
   .in(file("."))
@@ -48,7 +48,7 @@ lazy val root = project
     streamsJVM,
     streamsJS,
     benchmarks,
-    testJVM,
+    testModuleJVM,
     stacktracerJS,
     stacktracerJVM
   )
@@ -87,16 +87,16 @@ lazy val streams = crossProject(JSPlatform, JVMPlatform)
   .enablePlugins(BuildInfoPlugin)
   .dependsOn(core % "test->test;compile->compile")
 
-lazy val streamsJVM = streams.jvm.dependsOn(testJVM % "test->compile")
+lazy val streamsJVM = streams.jvm.dependsOn(testModuleJVM % "test->compile")
 lazy val streamsJS  = streams.js
 
-lazy val test = crossProject(JSPlatform, JVMPlatform)
+lazy val testModule = crossProject(JSPlatform, JVMPlatform)
   .in(file("test"))
   .settings(stdSettings("zio-test"))
   .dependsOn(core % "test->test;compile->compile")
 
-lazy val testJVM = test.jvm
-lazy val testJS  = test.js
+lazy val testModuleJVM = testModule.jvm
+lazy val testModuleJS  = testModule.js
 
 lazy val stacktracer = crossProject(JSPlatform, JVMPlatform)
   .in(file("stacktracer"))
